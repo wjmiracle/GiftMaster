@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵感礼盒 - 专业选礼底层逻辑</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 marked.js 用于渲染 Markdown（AI 返回的礼物列表） -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans SC', sans-serif; background-color: #fcfaf8; overflow-x: hidden; }
+        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05); }
+        .page-transition { transition: all 0.4s ease-in-out; display: none; opacity: 0; }
+        .active-page { display: block; opacity: 1; }
+        .bg-blob { position: absolute; border-radius: 50%; filter: blur(80px); z-index: -1; opacity: 0.4; animation: pulse 12s infinite alternate; }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.2); } }
+        .option-card { cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+        .option-card.active { border-color: #f43f5e; background: white; transform: translateY(-2px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .highlight-red { color: #f43f5e; font-weight: bold; }
+        .highlight-box { background: #fff1f2; border-left: 4px solid #f43f5e; padding: 1rem; border-radius: 0.5rem; }
+    </style>
+</head>
+<body class="min-h-screen relative p-4 md:p-8">
+    <div class="bg-blob w-96 h-96 bg-rose-100 -top-20 -left-20"></div>
+    <div class="bg-blob w-80 h-80 bg-amber-50 bottom-10 right-0"></div>
+
+    <div id="app" class="max-w-4xl mx-auto">
+        <!-- 首页 -->
+        <section id="page1" class="page-transition active-page text-center py-12">
+            <h1 class="text-5xl font-bold text-stone-900 mb-6 tracking-tight">灵感礼盒 🎁</h1>
+            <p class="text-xl text-stone-500 mb-10">专业帮助男生为女生挑选礼物</p>
+           
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                <div class="glass-card p-8 rounded-[2.5rem] text-left">
+                    <div class="text-rose-500 font-bold text-4xl mb-4">95%</div>
+                    <h3 class="text-xl font-bold mb-2 text-stone-800">准确且合理</h3>
+                    <p class="text-sm text-stone-400 leading-relaxed">基于底层送礼逻辑，规避「高风险」陷阱，让每一份心意都恰到好处。</p>
+                </div>
+                <div class="glass-card p-8 rounded-[2.5rem] text-left">
+                    <div class="text-amber-500 font-bold text-4xl mb-4">逻辑</div>
+                    <h3 class="text-xl font-bold mb-2 text-stone-800">深度解析原因</h3>
+                    <p class="text-sm text-stone-400 leading-relaxed">不仅是推荐礼物，更是教你如何通过礼物看清一段关系，不再盲目付出。</p>
+                </div>
+            </div>
+            <button onclick="goToPage(5)" class="px-16 py-5 bg-stone-900 text-white rounded-full text-xl font-bold hover:bg-black hover:scale-105 transition-all shadow-xl shadow-stone-200">
+                进入逻辑分析
+            </button>
+        </section>
+
+        <!-- 底层逻辑必看页 -->
+        <section id="page5" class="page-transition py-6">
+            <div class="flex items-center justify-between mb-8">
+                <button onclick="goToPage(1)" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">←</button>
+                <h2 class="text-xl font-bold">！！！必看前提：筛选表的底层逻辑！！！</h2>
+                <div class="w-10"></div>
+            </div>
+            <div class="space-y-8 overflow-y-auto max-h-[80vh] pr-2 no-scrollbar pb-10">
+                <div class="glass-card p-8 rounded-[2.5rem]">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-stone-800">
+                        <span class="w-6 h-6 bg-stone-900 text-white rounded-md flex items-center justify-center text-xs">一</span>
+                        最优解与安全解
+                    </h3>
+                    <div class="text-stone-600 text-sm leading-relaxed space-y-4">
+                        <p>这份筛选表是男生送礼的<span class="highlight-red">最优解</span>。核心准则：<span class="font-bold text-stone-800">在不同阶段，用匹配的礼物价值，给到舒服的心意传递。</span></p>
+                        <p class="highlight-box">✅ 筛选表 = 「不出错、不尴尬、不施压」的底层逻辑，适用于所有正常异性相处。</p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-[2.5rem]">
+                    <h3 class="text-lg font-bold mb-6 flex items-center gap-2 text-stone-800">
+                        <span class="w-6 h-6 bg-stone-900 text-white rounded-md flex items-center justify-center text-xs">二</span>
+                        深度解析：现在的送礼环境
+                    </h3>
+                    <div class="space-y-6">
+                        <div class="p-5 bg-emerald-50 rounded-2xl border border-emerald-100">
+                            <h4 class="font-bold text-emerald-700 mb-2">✅ 良性特例情况 (≤10%)</h4>
+                            <p class="text-base text-emerald-600/80 mb-3">高包容 + 低功利 + 对你好感度极高</p>
+                            <div class="text-xs text-stone-600 leading-relaxed space-y-2">
+                                <p><strong>心态：</strong>她收的是你「用心的诚意」，而不是物质本身。</p>
+                                <p><strong>一般特征：</strong></p>
+                                <p><strong>收礼时：</strong>开心是「纯粹的开心」，会直白说「谢谢你，这个礼物我很喜欢」，没有扭捏、没有客套的推脱，也没有「受宠若惊的卑微感」；</p>
+                                <p><strong>收礼后：</strong>不会因为收了贵礼，就刻意讨好 / 主动暧昧 / 提额外要求，相处模式和之前完全一样，对你的态度还是自然、真诚，甚至会在之后的相处里，用「低成本的走心方式回馈你」（比如主动给你带一杯奶茶、记得你的喜好、和你聊天更走心）；</p>
+                                <p><strong>她的价值观：</strong>平时自己的消费观「量力而行」，不会主动炫耀礼物，也不会觉得「收男生的贵礼是理所当然」，本质是阈值模糊但偏低，对「心意」的感知远大于「物质」。</p> 
+                            </div>
+                        </div>
+                        <div class="p-5 bg-amber-50 rounded-2xl border border-amber-100">
+                            <h4 class="font-bold text-amber-700 mb-2">⚠️ 现在环境大体情况 (≥90%)</h4>
+                            <p class="text-base text-amber-600/80 mb-3">高阈值 + 高接受度 + 偏物质功利</p>
+                            <div class="text-xs text-stone-600 leading-relaxed space-y-2">
+                                <p><strong>心态：</strong>礼物价值是她判断你“实力和重视度”的核心标准。</p>
+                                <p><strong>一般特征：</strong></p>
+                                <p><strong>收礼时：</strong>开心是「带着惊喜的满意」，会说「你也太用心了吧」「这个礼物我种草好久了」，甚至会主动晒礼物（朋友圈 / 社交平台），重点突出「礼物的价值 / 品牌」；不会推脱，甚至会「半推半就」的接受，嘴上说「太贵重了吧」，手却很诚实的收下，没有真正的拒绝；</p>
+                                <p><strong>收礼后：</strong>态度会明显升温、主动拉近关系，聊天更积极、回复更及时、愿意和你单独约会，但这种「升温」是「基于礼物的价值」，不是「基于对你的好感」；如果之后你送「200 元的礼物」，她的态度会立刻降温，甚至会表现出「失望 / 敷衍」，嘴里说「心意就好」，但行动上的落差会非常明显；</p>
+                                <p><strong>她的价值观：</strong>平时自己的消费观「偏高」，对礼物的「质感、品牌、价格」有明确要求，阈值是「绝对的高阈值」，不管关系阶段，都默认「礼物的价值 = 诚意」，甚至会觉得「刚认识就送贵礼，是男生的基本诚意」。</p>    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-[2.5rem] bg-purple-50 border border-purple-200">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-purple-800">
+                        <span class="w-6 h-6 bg-purple-900 text-white rounded-md flex items-center justify-center text-xs">三</span>
+                        针对不同经济实力的男生：送礼策略差异
+                    </h3>
+                    <div class="space-y-6 text-sm text-purple-700">
+                        <div class="p-4 bg-white/70 rounded-xl border border-purple-300">
+                            <h4 class="font-bold text-purple-800 mb-2">1. 经济平庸 / 一般男生（主流用户）</h4>
+                            <p>严格遵守筛选表：<strong>刚认识阶段 500+ 礼物完全排除</strong>，以低成本走心为主，风险最低，性价比最高。</p>
+                        </div>
+                        
+                        <div class="p-4 bg-white/70 rounded-xl border border-purple-300">
+                            <h4 class="font-bold text-purple-800 mb-2">2. 经济实力很强男生（高价值用户）</h4>
+                            <p>你可以适当放宽“500+ 限制”，但仍需遵循以下原则：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>送贵礼前，必须确认女生属于“良性特例”（或至少不是功利型）</li>
+                                <li>贵礼要“有故事、有品位、有唯一性”，而不是“纯堆钱”</li>
+                                <li>推荐“组合礼”：主礼（高价值） + 副礼（走心） + 仪式感</li>
+                                <li>避免“一次性砸太多”，保持“由低到高”的节奏，留出后续升级空间</li>
+                            </ul>
+                            <p class="mt-2 font-bold">一句话总结：有钱不等于乱砸钱，有钱要砸得有格调。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-[2.5rem]">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-rose-800">
+                        <span class="w-6 h-6 bg-rose-900 text-white rounded-md flex items-center justify-center text-xs">四</span>
+                        三维 99% 精准判断模型（零基础也能学会）
+                    </h3>
+                    <div class="text-stone-700 text-sm leading-relaxed space-y-4">
+                        <p class="font-bold">核心逻辑：先锁定「不会错的大方向」（准确率 99%），再微调「小款式」（准确率 85%）。哪怕小款式错了，大方向对了，礼物也绝不会踩雷。</p>
+                        <p>三步法：外在特征（三维观察） → 语言信息（精准捕捉） → 交叉验证（排除伪装）</p>
+
+                        <div class="mt-4 p-4 bg-rose-50 rounded-xl border border-rose-200">
+                            <h4 class="font-bold text-rose-700 mb-2">第一步：三维外在特征观察法（90% 准确）</h4>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li><strong>审美风格维度</strong>：头像/穿搭/生活物品 → 定「简约/精致/可爱/独特」</li>
+                                <li><strong>生活习惯维度</strong>：作息/抱怨 → 定「护手/护眼/实用」</li>
+                                <li><strong>兴趣爱好维度</strong>：朋友圈/聊天话题 → 定「追星/看书/画画」</li>
+                            </ul>
+                        </div>
+
+                        <div class="mt-4 p-4 bg-rose-50 rounded-xl border border-rose-200">
+                            <h4 class="font-bold text-rose-700 mb-2">第二步：语言信息精准捕捉法（100% 优先级）</h4>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li>「大家都买这个」 → 从众型 → 选大众爆款</li>
+                                <li>「这个好麻烦」 → 极简型 → 选小件无负担</li>
+                                <li>「这个好特别」 → 独特型 → 选小众质感款</li>
+                                <li>「手好干」「眼睛好累」 → 直接送对应功能性礼物</li>
+                            </ul>
+                        </div>
+
+                        <div class="mt-4 p-4 bg-rose-50 rounded-xl border border-rose-200">
+                            <h4 class="font-bold text-rose-700 mb-2">第三步：交叉验证（99% 精准）</h4>
+                            <p>外在 + 语言一致 → 直接定版<br>不一致 → 以语言为准，外在为辅</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-[2.5rem]">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-stone-800">
+                        <span class="w-6 h-6 bg-stone-900 text-white rounded-md flex items-center justify-center text-xs">五</span>
+                        终极总结
+                    </h3>
+                    <div class="text-stone-500 text-lg leading-relaxed space-y-4">
+                        <p>真正喜欢你的女生，不会因为 50 元的花而嫌弃你；一个只喜欢礼物的女生，送 5000 元也留不住心。</p>
+                        <p class="font-bold text-stone-800 italic">“礼物是<span class="highlight-red">加分项</span>，不是必选项。真正的喜欢是靠心捂出来的。”</p>
+                    </div>
+                </div>
+
+                <button onclick="goToPage(2)" class="w-full py-5 bg-rose-500 text-white rounded-[2rem] text-lg font-bold hover:scale-[1.02] transition-all shadow-lg shadow-rose-200">
+                    我已理解底层逻辑，去选礼
+                </button>
+            </div>
+        </section>
+
+        <!-- 选择页面 -->
+        <section id="page2" class="page-transition py-6">
+            <button onclick="goToPage(5)" class="text-stone-400 mb-6">← 返回必看前提</button>
+            <h2 class="text-2xl font-bold mb-8 text-center text-stone-800">定制她的礼物画像</h2>
+
+            <div class="space-y-10">
+                <!-- 基本必选部分 -->
+                <div class="space-y-8">
+                    <div>
+                        <label class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4 block text-center">1. 当前关系阶段（必选）</label>
+                        <div class="grid grid-cols-3 gap-3 text-sm">
+                            <div onclick="setVal('stage', '刚认识', this)" class="option-card active glass-card py-4 rounded-2xl text-center">刚认识</div>
+                            <div onclick="setVal('stage', '暧昧中', this)" class="option-card glass-card py-4 rounded-2xl text-center">暧昧中</div>
+                            <div onclick="setVal('stage', '恋爱中', this)" class="option-card glass-card py-4 rounded-2xl text-center">恋爱中</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4 block text-center">2. 她的心意阈值（必选）</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div onclick="setVal('threshold', 'low', this)" class="option-card glass-card p-5 rounded-2xl text-center">
+                                <p class="font-bold text-sm mb-1">低阈值</p>
+                                <p class="text-[10px] text-stone-400">重视心意与情感温度</p>
+                            </div>
+                            <div onclick="setVal('threshold', 'high', this)" class="option-card active glass-card p-5 rounded-2xl text-center">
+                                <p class="font-bold text-sm mb-1">高阈值</p>
+                                <p class="text-[10px] text-stone-400">重视品质、品牌、价值</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4 block text-center">3. 审美偏好（必选）</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div onclick="setVal('aesthetic', '大众', this)" class="option-card active glass-card p-5 rounded-2xl text-center">
+                                <p class="font-bold text-sm mb-1">大众</p>
+                                <p class="text-[10px] text-stone-400">经典、广受认可</p>
+                            </div>
+                            <div onclick="setVal('aesthetic', '小众', this)" class="option-card glass-card p-5 rounded-2xl text-center">
+                                <p class="font-bold text-sm mb-1">小众</p>
+                                <p class="text-[10px] text-stone-400">独立、独特设计</p>
+                            </div>
+                            <div onclick="setVal('aesthetic', '模糊', this)" class="option-card glass-card p-5 rounded-2xl text-center">
+                                <p class="font-bold text-sm mb-1">模糊/不清楚</p>
+                                <p class="text-[10px] text-stone-400">还没观察清楚</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分隔线 + 可选部分 -->
+                <div class="border-t border-stone-200 pt-6">
+                    <p class="text-center text-sm text-stone-400 mb-6">以下为可选信息（越详细越精准）</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- 风格（版型 + 灵魂） -->
+                        <div>
+                            <label class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4 block text-center">4. 整体风格（可选）</label>
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-xs font-bold text-stone-500 mb-2">版型（互斥）</p>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                                        <div onclick="setVal('styleVersion', '简约', this)" class="option-card glass-card py-2 rounded-xl text-center">简约</div>
+                                        <div onclick="setVal('styleVersion', '可爱', this)" class="option-card glass-card py-2 rounded-xl text-center">可爱</div>
+                                        <div onclick="setVal('styleVersion', '温柔', this)" class="option-card glass-card py-2 rounded-xl text-center">温柔</div>
+                                        <div onclick="setVal('styleVersion', '清冷', this)" class="option-card glass-card py-2 rounded-xl text-center">清冷</div>
+                                        <div onclick="setVal('styleVersion', '复古', this)" class="option-card glass-card py-2 rounded-xl text-center">复古</div>
+                                        <div onclick="setVal('styleVersion', '元气', this)" class="option-card glass-card py-2 rounded-xl text-center">元气</div>
+                                        <div onclick="setVal('styleVersion', '中性', this)" class="option-card glass-card py-2 rounded-xl text-center">中性</div>
+                                        <div onclick="setVal('styleVersion', '模糊', this)" class="option-card active glass-card py-2 rounded-xl text-center">模糊</div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p class="text-xs font-bold text-stone-500 mb-2">灵魂（可多选，但选了“模糊”后只能选这个）</p>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+                                        <div onclick="toggleSoul('精致', this)" class="option-card glass-card py-2 rounded-xl text-center">精致</div>
+                                        <div onclick="toggleSoul('雅素', this)" class="option-card glass-card py-2 rounded-xl text-center">雅素</div>
+                                        <div onclick="toggleSoul('质感', this)" class="option-card glass-card py-2 rounded-xl text-center">质感</div>
+                                        <div onclick="toggleSoul('细腻', this)" class="option-card glass-card py-2 rounded-xl text-center">细腻</div>
+                                        <div onclick="toggleSoul('百搭', this)" class="option-card glass-card py-2 rounded-xl text-center">百搭</div>
+                                        <div onclick="toggleSoul('模糊', this)" class="option-card glass-card py-2 rounded-xl text-center active">模糊</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 爱好（可多选，但选了“无明确显性爱好”后只能选这个） -->
+                        <div>
+                            <label class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4 block text-center">5. 主要爱好（可选，可多选）</label>
+                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                <div onclick="toggleHobby('文化', this)" class="option-card glass-card py-3 rounded-xl text-center">文化</div>
+                                <div onclick="toggleHobby('影视追星', this)" class="option-card glass-card py-3 rounded-xl text-center">影视追星</div>
+                                <div onclick="toggleHobby('艺术', this)" class="option-card glass-card py-3 rounded-xl text-center">艺术</div>
+                                <div onclick="toggleHobby('生活治愈', this)" class="option-card glass-card py-3 rounded-xl text-center">生活治愈</div>
+                                <div onclick="toggleHobby('运动活力', this)" class="option-card glass-card py-3 rounded-xl text-center">运动活力</div>
+                                <div onclick="toggleHobby('科技数码', this)" class="option-card glass-card py-3 rounded-xl text-center">科技数码</div>
+                                <div onclick="toggleHobby('穿搭美妆', this)" class="option-card glass-card py-3 rounded-xl text-center">穿搭美妆</div>
+                                <div onclick="toggleHobby('无明确显性爱好', this)" class="option-card active glass-card py-3 rounded-xl text-center">无明确显性爱好</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 下一步按钮 -->
+                <div class="pt-6">
+                    <button onclick="goToPage(6)" class="w-full py-5 bg-rose-500 text-white rounded-[2rem] text-lg font-bold hover:scale-[1.02] transition-all shadow-lg shadow-rose-200">
+                        下一步 → 选择预算区间
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 预算选择页面（page6） -->
+        <section id="page6" class="page-transition py-6">
+            <button onclick="goToPage(2)" class="text-stone-400 mb-6">← 返回画像设置</button>
+            <h2 class="text-2xl font-bold mb-8 text-center text-stone-800">选择你的预算区间</h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                <div onclick="setVal('price', '200内', this)" class="option-card glass-card py-6 rounded-2xl text-sm">¥200 内</div>
+                <div onclick="setVal('price', '200-500', this)" class="option-card active glass-card py-6 rounded-2xl text-sm">¥200-500</div>
+                <div onclick="setVal('price', '500-1000', this)" class="option-card glass-card py-6 rounded-2xl text-sm">¥500-1000</div>
+                <div onclick="setVal('price', '1000-2000', this)" class="option-card glass-card py-6 rounded-2xl text-sm">¥1k-2k</div>
+                <div onclick="setVal('price', '2000+', this)" class="option-card glass-card py-6 rounded-2xl text-sm">¥2000+</div>
+            </div>
+
+            <div class="mt-12">
+                <button onclick="analyzeGift()" class="w-full py-5 bg-stone-900 text-white rounded-[2rem] text-lg font-bold shadow-xl">
+                    开始分析 & 查看推荐
+                </button>
+            </div>
+        </section>
+
+        <!-- 结果页 -->
+        <section id="page3" class="page-transition py-6">
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="goToPage(6)" class="text-stone-400 text-sm">← 重新选择预算</button>
+                <h2 class="text-xl font-bold">礼物分析报告</h2>
+                <div class="w-10"></div>
+            </div>
+
+            <div class="glass-card rounded-[2.5rem] p-8 mb-6 border-l-4 border-l-rose-500">
+                <h3 class="font-bold text-rose-500 mb-4 flex items-center gap-2">💡 逻辑支撑</h3>
+                <div id="reasonContent" class="text-stone-600 text-sm leading-relaxed space-y-3"></div>
+            </div>
+
+            <div id="giftList" class="space-y-4"></div>
+
+            <div class="mt-8 p-6 bg-stone-100 rounded-2xl text-xs text-stone-400 leading-relaxed">
+                特别提醒：如果她接受了超出阶段的高价礼物，请务必回到“必看前提”中的第二条进行观察验证。
+            </div>
+        </section>
+
+        <!-- 阈值判定指南 -->
+        <section id="page4" class="page-transition py-6">
+            <div class="flex items-center justify-between mb-8">
+                <button onclick="goToPage(2)" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">←</button>
+                <h2 class="text-xl font-bold">阈值判定指南</h2>
+                <div class="w-10"></div>
+            </div>
+            <div class="space-y-6 overflow-y-auto max-h-[75vh] pr-2 no-scrollbar">
+                <div class="glass-card p-8 rounded-[2rem]">
+                    <h4 class="text-rose-500 font-bold mb-4">如何判断她的阈值？</h4>
+                    <ul class="space-y-4 text-sm text-stone-600">
+                        <li>• <strong>低阈值：</strong> 捡的树叶书签、随口提的奶茶，她会开心很久。</li>
+                        <li>• <strong>高阈值-小众：</strong> 拒绝爆款，看重审美共鸣，喜欢独立设计师、冷门黑胶。</li>
+                        <li>• <strong>高阈值-大众：</strong> 认可硬通货，喜欢施华洛世奇、香奈儿小样等知名品牌。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 坚持500+决策页面 -->
+        <section id="page7" class="page-transition py-6">
+            <div class="flex items-center justify-between mb-8">
+                <button onclick="goToPage(3)" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">←</button>
+                <h2 class="text-xl font-bold text-center">坚持选择 相对贵重 礼物决策</h2>
+                <div class="w-10"></div>
+            </div>
+
+            <div class="glass-card p-8 rounded-[2.5rem] mb-8 bg-amber-50 border border-amber-200">
+                <h3 class="text-lg font-bold text-amber-800 mb-4">关键补充：为什么你的筛选表，把「刚认识的 相对贵重的 礼物」归为「排除项」？</h3>
+                <p class="text-amber-800 text-base leading-relaxed mb-6">
+                    你这份框架的核心，<span class="text-lg font-bold">不是</span>「不让你送贵礼」，<span class="text-lg font-bold">而是</span>
+                    <strong class="text-rose-600">「帮你规避「高投入、高风险、低回报」的送礼陷阱」</strong>，<br>
+                    刚认识送贵重礼物，哪怕女生收了，对男生来说，永远是「弊大于利」。<br>
+                    这 <span class="text-rose-600 font-bold">3 个风险</span>，和女生是否收礼无关，是男生的「自我保护」，也是成熟的异性相处思维：
+                </p>
+                <div class="space-y-6 text-sm text-amber-700">
+                    <div class="p-4 bg-white/70 rounded-xl border border-amber-300">
+                        <h4 class="font-bold text-amber-800 mb-2">✅ 风险 1：你彻底失去了「试探她心意」的机会，<strong class="text-rose-600">永远分不清她「喜欢的是你」还是「喜欢的是你的礼物」</strong></h4>
+                        <p class="leading-relaxed">
+                            刚认识的核心，是「互相了解、互相试探好感」，送礼的本质是「传递好感」，而不是「用钱砸好感」。<br>
+                            如果你送「平价的走心小礼」：她的反应，能真实反映她对你的态度 —— 喜欢你，就会开心收下 + 走心回馈；不喜欢你，就会礼貌拒绝 + 保持距离；觉得礼物敷衍，也会直白说，你能精准判断她的心意。<br>
+                            如果你送「贵礼」：她的「开心和接受」，完全没有参考价值—— 哪怕她对你没好感，也大概率会收下（没人会拒绝免费的高价值礼物）；哪怕她对你有好感，你也分不清这份好感，是「对你这个人」还是「对你的消费能力」。<br>
+                            <span class="font-bold text-amber-800">结论：</span> 贵礼，会让你对「她的心意」的判断，彻底失真。
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-white/70 rounded-xl border border-amber-300">
+                        <h4 class="font-bold text-amber-800 mb-2">✅ 风险 2：你打破了「关系的平等性」，<strong class="text-rose-600">把自己放在了「低位」，让后续相处充满「人情债的压力」</strong></h4>
+                        <p class="leading-relaxed">
+                            异性相处的核心，是「平等、舒服、双向奔赴」，刚认识时，双方的「情感付出」是 0，「人情往来」也是 0，这个阶段送贵礼，本质是：你用「物质的高付出」，换取「情感的低回报」。<br>
+                            女生收了贵礼，心里一定会有「人情债」：要么她是通透的女生，会想「我该怎么回礼，才能不欠他的」，然后硬着头皮买同等价值的礼物回你，双方都有压力；要么她是功利的女生，会觉得「他愿意送我贵礼，是他自愿的，我不用回」，然后心安理得的接受，你在她心里的地位，就变成了「愿意为她花钱的人」，而不是「想发展的对象」。<br>
+                            你自己也会有「心理预期」：送了贵礼，你一定会下意识的觉得「她应该对我更好、应该更愿意和我相处」，如果她的反应没达到你的预期，你会觉得「付出得不到回报」，心里失衡，甚至会主动提「我送了你这么贵的礼物」，让关系变得尴尬。<br>
+                            <span class="font-bold text-amber-800">结论：</span> 刚认识的贵礼，只会让平等的相处，变成「物质的博弈」。
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-white/70 rounded-xl border border-amber-300">
+                        <h4 class="font-bold text-amber-800 mb-2">✅ 风险 3：你拉高了「她对你的送礼预期」，<strong class="text-rose-600">之后的送礼只会「越来越卷」，永远没有回头路</strong></h4>
+                        <p class="leading-relaxed">
+                            人性的本质：由俭入奢易，由奢入俭难，送礼的「阈值」一旦被拉高，就再也降不下来了。<br>
+                            刚认识送 500+，暧昧期她就会期待 800+，恋爱期她就会期待 1000+，你永远要不断提高预算，才能满足她的期待；一旦你送的礼物「降价」，哪怕只是回到 200-500 的合理区间，她也会觉得「你没那么喜欢她了」「你敷衍她了」，哪怕你送的礼物再走心，也没用。<br>
+                            更可怕的是：如果这个女生是「高阈值物质型」，她会把你的「送礼预算」当成「你的实力底线」，甚至会主动暗示「我想要什么礼物」「别人的男朋友都送什么」，让你陷入「不送就不高兴，送了就肉疼」的恶性循环。<br>
+                            <span class="font-bold text-amber-800">结论：</span> 刚认识的贵礼，是给自己挖的「送礼陷阱」，只会让你越陷越深。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <div>
+                    <label class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4 block text-center">你的经济实力（影响提醒强度）</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div onclick="setEconomic('low', this)" class="option-card glass-card p-4 rounded-2xl text-center text-sm">一般</div>
+                        <div onclick="setEconomic('mid', this)" class="option-card glass-card p-4 rounded-2xl text-center text-sm">较强</div>
+                        <div onclick="setEconomic('high', this)" class="option-card glass-card p-4 rounded-2xl text-center text-sm active">不差钱</div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4 block text-center">选择你的预算（500+）</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div onclick="setVal('price', '500-1000', this)" class="option-card glass-card p-4 rounded-2xl text-center text-sm">¥500-1000</div>
+                        <div onclick="setVal('price', '1000-2000', this)" class="option-card glass-card p-4 rounded-2xl text-center text-sm">¥1k-2k</div>
+                        <div onclick="setVal('price', '2000+', this)" class="option-card glass-card p-4 rounded-2xl text-center text-sm">¥2000+</div>
+                    </div>
+                </div>
+
+                <button onclick="analyzeGiftHighRisk()" class="w-full py-5 bg-amber-600 text-white rounded-[2rem] text-lg font-bold hover:scale-[1.02] transition-all shadow-lg shadow-amber-200">
+                    确认风险 → 查看高价礼物推荐
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // ====================== 核心配置部分 ======================
+        // 使用火山引擎 API，通过代理调用（/api/proxy）
+        const MODEL_PROVIDER = 'volcengine';
+        const VOLCENGINE_MODEL = 'api-key-20251228234640'; // ← 替换成你的实际模型 ID（如 'ep-20241228234640' 或 'doubao-pro'），去控制台确认！
+
+        let userChoices = { 
+            stage: '刚认识', 
+            threshold: 'high',
+            aesthetic: '大众',
+            styleVersion: '模糊',
+            styleSoul: ['模糊'],
+            hobby: ['无明确显性爱好'],
+            price: '200-500'
+        };
+        let economicLevel = 'low';
+
+        function setVal(key, val, el) {
+            userChoices[key] = val;
+            el.parentElement.querySelectorAll('.option-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function toggleSoul(val, el) {
+            if (!userChoices.styleSoul) userChoices.styleSoul = [];
+            const index = userChoices.styleSoul.indexOf(val);
+
+            if (val === '模糊') {
+                if (index === -1) {
+                    userChoices.styleSoul = ['模糊'];
+                    el.parentElement.querySelectorAll('.option-card').forEach(c => {
+                        if (c.textContent.trim() !== '模糊') c.classList.remove('active');
+                    });
+                    el.classList.add('active');
+                } else {
+                    userChoices.styleSoul = [];
+                    el.classList.remove('active');
+                }
+            } else {
+                if (index > -1) {
+                    userChoices.styleSoul.splice(index, 1);
+                    el.classList.remove('active');
+                } else {
+                    const noneIndex = userChoices.styleSoul.indexOf('模糊');
+                    if (noneIndex > -1) {
+                        userChoices.styleSoul.splice(noneIndex, 1);
+                        el.parentElement.querySelectorAll('.option-card').forEach(c => {
+                            if (c.textContent.trim() === '模糊') c.classList.remove('active');
+                        });
+                    }
+                    userChoices.styleSoul.push(val);
+                    el.classList.add('active');
+                }
+            }
+        }
+
+        function toggleHobby(val, el) {
+            if (!userChoices.hobby) userChoices.hobby = [];
+            const index = userChoices.hobby.indexOf(val);
+
+            if (val === '无明确显性爱好') {
+                if (index === -1) {
+                    userChoices.hobby = ['无明确显性爱好'];
+                    el.parentElement.querySelectorAll('.option-card').forEach(c => {
+                        if (c.textContent.trim() !== '无明确显性爱好') c.classList.remove('active');
+                    });
+                    el.classList.add('active');
+                } else {
+                    userChoices.hobby = [];
+                    el.classList.remove('active');
+                }
+            } else {
+                if (index > -1) {
+                    userChoices.hobby.splice(index, 1);
+                    el.classList.remove('active');
+                } else {
+                    const noneIndex = userChoices.hobby.indexOf('无明确显性爱好');
+                    if (noneIndex > -1) {
+                        userChoices.hobby.splice(noneIndex, 1);
+                        el.parentElement.querySelectorAll('.option-card').forEach(c => {
+                            if (c.textContent.trim() === '无明确显性爱好') c.classList.remove('active');
+                        });
+                    }
+                    userChoices.hobby.push(val);
+                    el.classList.add('active');
+                }
+            }
+        }
+
+        function setEconomic(level, el) {
+            economicLevel = level;
+            document.querySelectorAll('[onclick^="setEconomic"]').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function goToPage(n) {
+            document.querySelectorAll('.page-transition').forEach(p => p.classList.remove('active-page'));
+            setTimeout(() => {
+                const target = document.getElementById('page' + n);
+                if(target) target.classList.add('active-page');
+                window.scrollTo(0,0);
+            }, 100);
+        }
+
+        // 优化后的 Prompt（更精准）
+        function getOptimizedPrompt() {
+            return `
+你是一位极具洞察力的男生送女生礼物顾问，精通送礼底层逻辑：
+- 低阈值：优先走心、情感、回忆、DIY、体验类礼物，避免过于物质。
+- 高阈值：优先品牌、质感、社交价值、能“拿得出手”的礼物。
+- 大众审美：推荐经典爆款、知名品牌。
+- 小众审美：推荐独立设计师、冷门独特、有故事的款式。
+- 风格版型 + 灵魂：深度匹配（例如“温柔+细腻”适合轻奢丝巾，“元气+百搭”适合活力小包）。
+- 爱好：必须结合（追星送周边、穿搭美妆送彩妆/饰品、科技数码送耳机/手环）。
+- 预算严格遵守用户区间，刚认识阶段避免高价。
+- 避免踩雷：不要送过于私密/昂贵/不匹配的东西。
+
+输出要求：
+- 严格 5-8 件礼物。
+- 每件礼物用 Markdown 格式：
+  - **礼物名称**（品牌/具体型号越详细越好）
+    - 价格区间（必须在预算内）
+    - 为什么适合她（结合所有画像维度，逻辑清晰，1-2 句）
+    - 购买建议（淘宝/京东/官网/小红书等渠道）
+- 不要废话，直接输出列表。
+- 如果预算高且阶段早，结尾加一句风险提醒。
+            `;
+        }
+
+        // AI 推荐核心函数（通过代理调用火山引擎）
+        async function analyzeGift() {
+            const isHighPrice = ['500-1000', '1000-2000', '2000+'].includes(userChoices.price);
+
+            // 收集完整画像
+            const profile = {
+                关系阶段: userChoices.stage,
+                心意阈值: userChoices.threshold === 'low' ? '低阈值（重视心意、情感温度、回忆价值）' : '高阈值（重视品质、品牌、社交价值、物质感）',
+                审美偏好: userChoices.aesthetic === '大众' ? '大众审美（经典、广受认可、硬通货）' :
+                           userChoices.aesthetic === '小众' ? '小众审美（独立设计师、独特、冷门）' : '审美偏好不明确',
+                风格版型: userChoices.styleVersion === '模糊' ? '风格版型不明确' : userChoices.styleVersion,
+                风格灵魂: userChoices.styleSoul.length > 0 && !userChoices.styleSoul.includes('模糊') ? userChoices.styleSoul.join('、') : '风格灵魂不明确',
+                主要爱好: userChoices.hobby.length > 0 && !userChoices.hobby.includes('无明确显性爱好') ? userChoices.hobby.join('、') : '无明确显性爱好',
+                预算区间: userChoices.price
+            };
+
+            const profileText = Object.entries(profile)
+                .map(([k, v]) => `${k}：${v}`)
+                .join('\n');
+
+            // 高风险判断
+            if (userChoices.stage === '刚认识' && isHighPrice) {
+                document.getElementById('reasonContent').innerHTML = `
+                    <p class="text-rose-600 font-bold">⚠️ 警示：</p>
+                    <p>在底层逻辑中，刚认识阶段送 <span class="highlight-red">${userChoices.price}</span> 被列为<span class="font-bold underline">完全剔除项</span>。</p>
+                    <p class="mt-2 text-stone-500 italic">“这样做是为了规避‘判断失真’、‘地位失衡’、‘预期过高’三大风险。昂贵的礼物会掩盖你的人格魅力，让对方产生不必要的心理负担，或将关系物质化。”</p>
+                    <p class="mt-4 font-bold text-stone-800 underline text-center">建议将预算调整至 500 元以下再行挑选。</p>
+                `;
+                document.getElementById('giftList').innerHTML = `
+                    <div class="glass-card p-10 rounded-[2rem] text-center">
+                        <div class="text-4xl mb-4">🚫</div>
+                        <p class="text-stone-400">逻辑保护中：此阶段严禁赠送高价礼物</p>
+                    </div>
+                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onclick="goToPage(6)" class="py-4 bg-stone-700 text-white rounded-[2rem] font-bold hover:scale-105 transition-all">
+                            返回调整 → 选择安全预算
+                        </button>
+                        <button onclick="goToPage(7)" class="py-4 bg-amber-600 text-white rounded-[2rem] font-bold hover:scale-105 transition-all">
+                            我坚持 → 查看高价推荐
+                        </button>
+                    </div>`;
+                goToPage(3);
+                return;
+            }
+
+            // 显示加载中
+            document.getElementById('reasonContent').innerHTML = `
+                <p class="text-rose-600 font-bold">正在生成个性化推荐...</p>
+                <p class="text-sm text-stone-600">画像：${profileText.replace(/\n/g, ' | ')}</p>
+            `;
+            document.getElementById('giftList').innerHTML = `
+                <div class="glass-card p-10 rounded-[2rem] text-center">
+                    <p class="text-stone-400">AI 分析中，请稍候...</p>
+                </div>
+            `;
+            goToPage(3);
+
+            try {
+                // 使用代理路径（后端会处理 Key 和请求）
+                const response = await fetch('/api/proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // 注意：这里不传 Authorization，后端会从环境变量读取 Key
+                    },
+                    body: JSON.stringify({
+                        model: VOLCENGINE_MODEL, // 你的模型 ID
+                        messages: [
+                            {
+                                role: 'system',
+                                content: getOptimizedPrompt()
+                            },
+                            {
+                                role: 'user',
+                                content: `用户画像（请严格基于以下信息生成推荐，不要添加额外假设）：
+${profileText}
+
+输出格式：严格使用 Markdown 列表，每条礼物格式如下：
+- **礼物名称**（品牌/型号越具体越好）
+  - 价格区间（必须在用户预算内）
+  - 为什么适合她（结合阈值、审美、风格、爱好，逻辑清晰）
+  - 购买建议（淘宝/京东/官网/小红书等渠道）
+
+共推荐 5-8 件礼物，避免重复或踩雷。`
+                            }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 1500,
+                        stream: false
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`代理请求失败：${response.status} - ${errorText}`);
+                }
+
+                const data = await response.json();
+                const aiReply = data.choices[0].message.content;
+
+                // 渲染结果
+                document.getElementById('reasonContent').innerHTML = `
+                    <p class="text-emerald-600 font-bold">AI 个性化推荐（火山引擎）</p>
+                    <p class="text-sm text-stone-600">画像：${profileText.replace(/\n/g, ' | ')}</p>
+                `;
+                document.getElementById('giftList').innerHTML = `
+                    <div class="glass-card p-6 rounded-[2rem] bg-emerald-50 border border-emerald-200">
+                        <div class="prose prose-sm max-w-none text-stone-800">
+                            ${marked.parse(aiReply)}
+                        </div>
+                    </div>
+                `;
+
+            } catch (err) {
+                console.error(err);
+                let errorMsg = err.message;
+                if (errorMsg.includes('403')) {
+                    errorMsg = '权限不足：请检查火山引擎控制台是否激活服务或购买额度';
+                } else if (errorMsg.includes('402')) {
+                    errorMsg = '余额不足：请去火山引擎控制台充值';
+                }
+                document.getElementById('reasonContent').innerHTML = `<p class="text-rose-600 font-bold">生成失败</p>`;
+                document.getElementById('giftList').innerHTML = `
+                    <div class="glass-card p-10 rounded-[2rem] text-center text-rose-500">
+                        <p>${errorMsg}</p>
+                        <p class="text-sm text-stone-600">请检查网络、API Key 或额度</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 原 analyzeGiftHighRisk 函数（保持不变）
+        function analyzeGiftHighRisk() {
+            let type = userChoices.threshold === 'low' ? 'low' : (userChoices.aesthetic === '小众' ? 'high-niche' : 'high-general');
+            const data = giftData[type][userChoices.price];
+            let riskText = economicLevel === 'high' 
+                ? '⚠️ 高价值男生专属推荐：贵礼需有品位、有故事，避免纯堆钱' 
+                : economicLevel === 'mid' 
+                ? '⚠️ 中等偏上经济实力：贵礼需谨慎，优先有品位组合' 
+                : '⚠️ 高风险推荐（自担风险）';
+
+            document.getElementById('reasonContent').innerHTML = `
+                <p class="text-amber-600 font-bold">${riskText}</p>
+                <p>画像分析：<span class="font-bold text-stone-800">${userChoices.stage} + ${userChoices.threshold === 'low' ? '低阈值' : '高阈值'} + ${userChoices.aesthetic}</span></p>
+                <p class="text-amber-700 italic mt-2">“${data.reason}”</p>
+                <p class="text-rose-600 font-bold mt-4">请务必确认她属于良性特例，否则风险极高。</p>
+            `;
+            let listHtml = `
+                <div class="mb-4 text-xs font-bold text-amber-500 uppercase tracking-widest pl-4">⚠️ 高价推荐清单（谨慎选择）</div>
+                ${data.keep.map(item => `
+                    <div class="glass-card p-5 rounded-[2rem] flex items-center justify-between mb-3 border-l-4 border-l-amber-400 bg-amber-50">
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-sm">🎁</div>
+                            <p class="font-bold text-stone-800 text-sm">${item}</p>
+                        </div>
+                    </div>
+                `).join('')}
+                
+                ${data.reject ? `
+                <div class="mt-6 mb-4 text-xs font-bold text-rose-400 uppercase tracking-widest pl-4">❌ 仍需规避</div>
+                <div class="glass-card p-5 rounded-[2rem] bg-stone-50/50">
+                    <p class="text-xs text-stone-400">在此定位下请规避：<span class="text-rose-400 font-bold">${data.reject.join('、')}</span></p>
+                </div>` : ''}
+            `;
+            document.getElementById('giftList').innerHTML = listHtml;
+            goToPage(3);
+        }
+
+        // giftData（原静态数据，备用）
+        const giftData = {
+            "low": {
+                "200内": { 
+                    keep: ["小束鲜切花 (30-80元)", "手绘书签/折纸星星", "复古明信片套装", "极简文艺小物"], 
+                    reject: ["饰品", "电子产品"], 
+                    reason: "低阈值的她更看重'试探性美感'和情感温度。避开昂贵实物，用鲜花和小文艺品传递清新印象。" 
+                },
+                "200-500": { 
+                    keep: ["双人陶艺DIY体验", "照片定制抱枕", "兴趣IP周边手办", "话剧/脱口秀门票"], 
+                    reject: ["连锁品牌代金券"], 
+                    reason: "共同的体验比单纯的物体更能拉近关系，增加互动感和回忆价值是关键。" 
+                },
+                "500-1000": { 
+                    keep: ["演唱会/音乐节门票", "中型限定玩偶", "情侣对戒 (刻字款)"], 
+                    reject: ["奢侈品小样"], 
+                    reason: "预算可适当提升，但仍以'共同回忆'和'情绪价值'为主，避免过于物质化。" 
+                },
+                "1000-2000": { 
+                    keep: ["周边城市双人游 (含特色民宿)", "拍立得套装 (含一年相纸)"], 
+                    reject: ["纯金饰品"], 
+                    reason: "通过较长时间的共处来深化感情，比昂贵的实物更有价值。" 
+                },
+                "2000+": { 
+                    keep: ["高级手工定制首饰", "长途旅行计划包", "全套心愿单礼物"], 
+                    reject: ["直接给现金"], 
+                    reason: "此时礼物是承诺的载体。用极高的情绪价值覆盖物质本身。" 
+                }
+            },
+            "high-niche": {
+                "200内": { 
+                    keep: ["小众香薰蜡片", "手工植物调干花", "冷门黑胶试听装"], 
+                    reject: ["网红爆款"], 
+                    reason: "她偏好独特。哪怕价格不高，也要体现你挖掘宝藏的独特眼光。" 
+                },
+                "200-500": { 
+                    keep: ["小众设计师银饰", "独立乐队限量专辑", "手工香薰机"], 
+                    reject: ["黄金饰品"], 
+                    reason: "礼物定位应为'审美共鸣'。选择有故事的小众饰品能精准击中她的品味。" 
+                },
+                "500-1000": { 
+                    keep: ["沙龙香水 (非商业调)", "艺术画册限定版", "独立工作室皮具"], 
+                    reject: ["商业大牌香水"], 
+                    reason: "高预算应投入到她热爱的垂直领域，体现你对她爱好的深度尊重。" 
+                },
+                "1000-2000": { 
+                    keep: ["设计师限量版手袋", "中古收藏级首饰", "黑胶唱片机入门套装"], 
+                    reject: ["新款iPhone"], 
+                    reason: "强化“唯一性”和“稀缺性”，满足她对独特审美身份的认同。" 
+                },
+                "2000+": { 
+                    keep: ["独立艺术家限量雕塑/画作", "定制级礼服/旗袍", "冷门奢华品牌配饰"], 
+                    reject: ["LV/GUCCI爆款"], 
+                    reason: "拒绝流水线大牌，用金钱购买审美上的“绝对差异化”。" 
+                }
+            },
+            "high-general": {
+                "200内": { 
+                    keep: ["大牌美妆小样套装", "网红联名盲盒", "知名连锁下午茶"], 
+                    reject: ["无名手工"], 
+                    reason: "对方看重品牌感。知名品牌的入门级产品比昂贵但无名的礼物更稳妥。" 
+                },
+                "200-500": { 
+                    keep: ["施华洛世奇/APM耳钉", "富士拍立得 (经典款)", "连锁火锅双人餐"], 
+                    reject: ["独立品牌饰品"], 
+                    reason: "品牌溢价是加分项，能提供充足的社交传播价值和“拿得出手”的安全感。" 
+                },
+                "500-1000": { 
+                    keep: ["YSL/TF口红套装", "大牌身体乳礼盒", "Apple AirTag"], 
+                    reject: ["DIY手作"], 
+                    reason: "经典大牌的热门产品是绝对的安全牌，规避任何审美偏差的风险。" 
+                },
+                "1000-2000": { 
+                    keep: ["Dior/Chanel护肤套装", "Apple Watch", "Coach/MK经典包袋"], 
+                    reject: ["冷门文创"], 
+                    reason: "认可度极高的硬通货，是稳固关系的基石。品牌即是诚意。" 
+                },
+                "2000+": { 
+                    keep: ["iPhone系列", "LV/Celine 经典入门包", "戴森吹风机全套装"], 
+                    reject: ["不知名高级定制"], 
+                    reason: "顶级大牌的王牌产品。在她的社交圈中具有极高的价值公认度。" 
+                }
+            }
+        };
+    </script>
+</body>
+</html>
