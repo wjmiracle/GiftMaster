@@ -426,8 +426,7 @@
     <script>
         // ====================== 核心配置部分 ======================
         // 使用火山引擎 API，通过代理调用（/api/proxy）
-        const MODEL_PROVIDER = 'volcengine';
-        const VOLCENGINE_MODEL = 'api-key-20251228234640'; // ← 替换成你的实际模型 ID（如 'ep-20241228234640' 或 'doubao-pro'），去控制台确认！
+        const VOLCENGINE_MODEL = 'ep-20251228234558-4kq5g'; // ← 你的实际模型 ID（从控制台复制）
 
         let userChoices = { 
             stage: '刚认识', 
@@ -615,7 +614,6 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
-                        // 注意：这里不传 Authorization，后端会从环境变量读取 Key
                     },
                     body: JSON.stringify({
                         model: VOLCENGINE_MODEL, // 你的模型 ID
