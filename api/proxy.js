@@ -1,30 +1,27 @@
-// api/proxy.js
 const express = require('express');
 const cors = require('cors');
-const fetch = require('node-fetch');
-const app = express();
+const OpenAI = require('openai');
 
-app.use(cors()); // 允许跨域
-app.use(express.json()); // 解析 JSON
+const app = express();
+app.use(cors());
+app.use(express.json());
 
 app.post('/proxy', async (req, res) => {
   try {
-    const response = await fetch('https://ark.cn-beijing.volcengineapi.com/api/v3/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.VOLCENGINE_API_KEY}` // 从环境变量读取 Key
-      },
-      body: JSON.stringify(req.body)
+    const openai = new OpenAI({
+      apiKey: process.env.VOLCENGINE_API_KEY, // Vercel 环境变量
+      baseURL: 'https://ark.cn-beijing.volces.com/api/v3',
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`火山引擎 API 错误: ${response.status} - ${errorText}`);
-    }
+    const completion = await openai.chat.completions.create({
+      model: req.body.model || 'ep-20251228234558-4kq5g', // 你的 ID
+      messages: req.body.messages,
+      temperature: req.body.temperature || 0.7,
+      max_tokens: req.body.max_tokens || 1500,
+      stream: false
+    });
 
-    const data = await response.json();
-    res.json(data);
+    res.json(completion);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
